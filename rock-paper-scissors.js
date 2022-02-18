@@ -1,49 +1,91 @@
-const gameChoices = ['Rock', 'Paper', 'Scissors'];
+const rock = document.querySelector('#rock');
+const paper = document.querySelector('#paper');
+const scissors = document.querySelector('#scissors');
+const buttons = document.querySelectorAll('.choices');
+const reset = document.querySelector('#reset');
+let userWins = 0;
+let compWins = 0;
 
 function computerChoice() {
+    const gameChoices = ['rock', 'paper', 'scissors'];
     const choice = Math.floor(Math.random()*gameChoices.length);
     return gameChoices[choice];
 }
 
-function playerChoice() {
-    let player = window.prompt('Rock, Paper, or Scissors?');
-    fixedPlayer = player.charAt(0).toUpperCase() + player.slice(1).toLowerCase();
-    return fixedPlayer;
+function playerChoice(e) {
+    const playerSelection = e.target.id;
+    const computerSelection = computerChoice();
+    playRound(playerSelection, computerSelection);
 }
 
+rock.addEventListener('click', playerChoice);
+paper.addEventListener('click', playerChoice);
+scissors.addEventListener('click', playerChoice);
+
+function winner() {
+  userWins++;
+  const userWin = document.querySelector('#outcome');
+  userWin.textContent = "You won this round!";
+  updateScore();
+  if (userWins == 5) {
+      userWin.textContent = "You won the whole thing!";
+      rock.disabled = true;
+      paper.disabled = true;
+      scissors.disabled = true;
+  }
+}
+
+function loser() {
+  compWins++;
+  const compWin = document.querySelector('#outcome');
+  compWin.textContent = "Your opponent won this round!";
+  updateScore();
+  if (compWins == 5) {
+      compWin.textContent = "You lost the game!";
+      rock.disabled = true;
+      paper.disabled = true;
+      scissors.disabled = true;
+  }
+}
+
+function tie() {
+  const tied = document.querySelector('#outcome');
+  tied.textContent = "It's a tie!";
+}
+
+function updateScore() {
+    const playerScore = document.querySelector('#userscore');
+    const computerScore = document.querySelector('#computerscore');
+    playerScore.textContent = userWins;
+    computerScore.textContent = compWins;
+}
 
 function playRound(player, computer) {
-    if (player === 'Rock' && computer === 'Scissors') {
-        return 'You won! ';
-    } else if (player === 'Rock' && computer === 'Paper') {
-        return 'You lost! ';
-    } else if (player === 'Rock' && computer === 'Rock') {
-        return 'There was a tie! ';
-    } else if (player === 'Paper' && computer === 'Rock') {
-        return 'You won! ';
-    } else if (player === 'Paper' && computer === 'Scissors') {
-        return 'You lost! ';
-    } else if (player === 'Paper' && computer === 'Paper') {
-        return 'There was a tie! ';
-    } else if (player === 'Scissors' && computer === 'Paper') {
-        return 'You won! ';
-    } else if (player === 'Scissors' && computer === 'Rock') {
-        return 'You lost! ';
-    } else if (player === 'Scissors' && computer === 'Scissors') {
-        return 'There was a tie! ';
-    } else {
-        return 'You must choose either Rock, Paper, or Scissors! ';
+    if (player === 'rock' && computer === 'scissors') {
+        winner();
+    } else if (player === 'rock' && computer === 'paper') {
+        loser();
+    } else if (player === 'rock' && computer === 'rock') {
+        tie();
+    } else if (player === 'paper' && computer === 'rock') {
+        winner();
+    } else if (player === 'paper' && computer === 'scissors') {
+        loser();
+    } else if (player === 'paper' && computer === 'paper') {
+        tie();
+    } else if (player === 'scissors' && computer === 'paper') {
+        winner();
+    } else if (player === 'scissors' && computer === 'rock') {
+        loser();
+    } else if (player === 'scissors' && computer === 'scissors') {
+        tie();
+    } 
+}
+
+function restart() {
+    if (userWins == 5 || compWins == 5) {
+        window.location.reload();
     }
 }
 
-function game() {
-    let i = 1
-    let rounds = ''
-    while (i <= 5) {
-        rounds += playRound(playerChoice(), computerChoice());
-        i++
-    }
-    return rounds
-}
-
-console.log(game());
+reset.addEventListener('click', restart);
